@@ -4,30 +4,31 @@ using CRUDTasknWeave.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using CRUDTasknWeave.Data;
+using CRUDTasknWeave.Serveces;
 
 namespace CRUDTasknWeave.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Administrator,Manager")]
+    //[Authorize(Roles = "Administrator,Manager")]
     public class ProductController : ControllerBase
     {
-        private readonly ApplicationDBContext _context;
-        public ProductController(ApplicationDBContext context)
+        private readonly IProductsService _productsService;
+        public ProductController(IProductsService productsService)
         {
-            _context = context;
+            _productsService = productsService;
         }
         [HttpGet]
         public ActionResult<IEnumerable<Product>> GetProducts()
         {
-            var products = _context.Products.ToList();
+            var products = _productsService.GetProducts();
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Product> GetProduct(int id)
         {
-            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            var product = _productsService.GetProductById(id);
 
             if (product == null)
             {
@@ -40,16 +41,18 @@ namespace CRUDTasknWeave.Controllers
         [HttpPost]
         public ActionResult<Product> CreateProduct(Product product)
         {
-            _context.Products.Add(product);
-            _context.SaveChanges();
-
-            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("product not Valid");
+            }
+            _productsService.CreateProduct(product);
+            return Ok(product);
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateProduct(int id, Product updatedProduct)
         {
-            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            var product = _productsService.GetProductById(id);
 
             if (product == null)
             {
@@ -61,23 +64,21 @@ namespace CRUDTasknWeave.Controllers
             product.Price = updatedProduct.Price;
             product.ImageUrl = updatedProduct.ImageUrl;
 
-            _context.SaveChanges();
-
-            return NoContent();
+            _productsService.UpdateProduct(product);
+            return Ok(product);
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteProduct(int id)
         {
-            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            var product = _productsService.GetProductById(id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            _context.Products.Remove(product);
-            _context.SaveChanges();
+            _productsService.DeleteProduct(product);
 
             return NoContent();
         }

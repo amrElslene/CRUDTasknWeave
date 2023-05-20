@@ -2,6 +2,8 @@ using System.Text;
 using CRUDTasknWeave.Configration;
 using CRUDTasknWeave.Data;
 using CRUDTasknWeave.Models;
+using CRUDTasknWeave.Serveces;
+using CRUDTasknWeave.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +18,7 @@ namespace CRUDTasknWeave
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddTransient<IProductsService, ProductService>();
             builder.Services.AddDbContext<ApplicationDBContext>(Options =>
             {
                 Options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
