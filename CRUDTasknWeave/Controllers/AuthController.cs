@@ -1,6 +1,4 @@
-﻿using CRUDTasknWeave.Configration;
-using CRUDTasknWeave.Data;
-using CRUDTasknWeave.Models;
+﻿using CRUDTasknWeave.Models;
 using CRUDTasknWeave.Helpers;
 using CRUDTasknWeave.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -10,11 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
-using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Authentication;
-using System.Data;
 
 namespace CRUDTasknWeave.Controllers
 {
@@ -26,7 +20,7 @@ namespace CRUDTasknWeave.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthController(UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -118,6 +112,7 @@ namespace CRUDTasknWeave.Controllers
         public async Task<IActionResult> Login([FromBody] UserLogin model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
+            
             if (user == null)
             {
                 return BadRequest(new AuthResult()
@@ -126,13 +121,13 @@ namespace CRUDTasknWeave.Controllers
                 });
             }
 
+
             if (!PasswordHasher.VerifyPassword(model.Password, user.PasswordHash))
             {
                 return BadRequest("Invalid password.");
             }
 
             var token = generateJwtToken(user);
-
             return Ok(new AuthResult()
             {
                 Token = token,

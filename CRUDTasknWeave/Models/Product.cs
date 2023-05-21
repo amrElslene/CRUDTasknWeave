@@ -5,7 +5,7 @@ namespace CRUDTasknWeave.Models
 {
     public class Product
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int Id { get; set; }
         [Required]

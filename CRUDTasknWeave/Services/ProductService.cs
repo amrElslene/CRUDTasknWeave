@@ -2,6 +2,7 @@
 using CRUDTasknWeave.Models;
 using CRUDTasknWeave.Serveces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRUDTasknWeave.Services
 {
@@ -12,19 +13,19 @@ namespace CRUDTasknWeave.Services
         {
             _context = context;
         }
-        public IEnumerable<Product> GetProducts()
+        public async Task<IEnumerable<Product>> GetProducts()
         {
-            return _context.Products.ToList();
+            return await _context.Products.ToListAsync();
         }
-        public Product GetProductById(int id)
+        public async Task<Product> GetProductById(int id)
         {
-            return _context.Products.FirstOrDefault(p => p.Id == id);
+            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
-        public Product CreateProduct(Product product)
+        public async Task<Product> CreateProduct(Product product)
         {
-            _context.Products.Add(product);
+            await _context.Products.AddAsync(product);
             _context.SaveChanges();
-            return product;
+            return  product;
         }
         public void UpdateProduct(Product updatedProduct)
         {

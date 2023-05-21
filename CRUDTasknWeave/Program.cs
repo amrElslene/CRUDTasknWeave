@@ -25,8 +25,7 @@ namespace CRUDTasknWeave
             });
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                 .AddEntityFrameworkStores<ApplicationDBContext>()
-                 .AddDefaultTokenProviders();
+                 .AddEntityFrameworkStores<ApplicationDBContext>();
 
             builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection(key: "JwtConfig"));
 

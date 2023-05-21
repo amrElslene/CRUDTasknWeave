@@ -10,7 +10,7 @@ namespace CRUDTasknWeave.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Administrator,Manager")]
+    [Authorize(Roles = "Administrator,Manager")]
     public class ProductController : ControllerBase
     {
         private readonly IProductsService _productsService;
@@ -19,16 +19,16 @@ namespace CRUDTasknWeave.Controllers
             _productsService = productsService;
         }
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            var products = _productsService.GetProducts();
+            var products = await _productsService.GetProducts();
             return Ok(products);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Product> GetProduct(int id)
+        public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = _productsService.GetProductById(id);
+            var product =await _productsService.GetProductById(id);
 
             if (product == null)
             {
@@ -39,20 +39,20 @@ namespace CRUDTasknWeave.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Product> CreateProduct(Product product)
+        public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("product not Valid");
             }
-            _productsService.CreateProduct(product);
+            await _productsService.CreateProduct(product);
             return Ok(product);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateProduct(int id, Product updatedProduct)
+        public async Task<IActionResult> UpdateProduct(int id, Product updatedProduct)
         {
-            var product = _productsService.GetProductById(id);
+            var product = await _productsService.GetProductById(id);
 
             if (product == null)
             {
@@ -69,9 +69,9 @@ namespace CRUDTasknWeave.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteProduct(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            var product = _productsService.GetProductById(id);
+            var product =await _productsService.GetProductById(id);
 
             if (product == null)
             {
